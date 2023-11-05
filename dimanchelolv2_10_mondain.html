@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>lettres-geules</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: "arial", sans-serif;
+        }
+
+        .left-column {
+            background-color: none;
+            width: 33%;
+            position: fixed;
+            top: 2vh;
+            left: 1vw;
+            padding: 10px;
+        }
+
+        textarea {
+            min-width: calc(100% - 2vh);
+            max-width: calc(100% - 2vh);
+            height: 86vh;
+            margin-top: 2vh;
+            padding: 1vh;
+            border: none;
+            font-family: "arial", sans-serif;
+            resize: none;
+        }
+
+        textarea:focus {
+    outline: none !important;
+  border: 2px solid #ff6ac2;
+}
+
+        #caret {
+            display: inline-block;
+            background-color: black;
+            width: 4px;
+            height: 1.2em;
+            animation: caret-blink 0.7s steps(1) infinite;
+        }
+
+        @keyframes caret-blink {
+            0%, 100% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: black;
+            }
+        }
+
+        .right-column {
+            background-color: none;
+            position: absolute;
+            top: 2vh;
+            left: calc(33% + 4vw);
+            width:calc(100% - 33% - 6vw);
+            padding: 10px;
+            display: inline-block;
+            max-height: 94vh; /* Set a maximum height for scrolling */
+            overflow-y: auto; /* Enable vertical scroll when content overflows */
+        }
+
+        img {
+            height: 64px;
+            margin: 5px;
+            display: inline;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="left-column">
+        <h1>Text to Image Translator: Des phrases de visages</h1>
+        <textarea id="input-text" placeholder="Enter your text here"></textarea>
+    </div>
+
+    <div class="right-column" id="output-image">
+        <div id="caret"></div>
+    </div>
+
+    <script>
+        const imageFilenames = {
+            'a': 'alphabet_imgs_mondain/a.png', 'b': 'alphabet_imgs_mondain/b.png', 'c': 'alphabet_imgs_mondain/c.png', 'd': 'alphabet_imgs_mondain/d.png', 'e': 'alphabet_imgs_mondain/e.png',
+                'f': 'alphabet_imgs_mondain/f.png', 'g': 'alphabet_imgs_mondain/g.png', 'h': 'alphabet_imgs_mondain/h.png', 'i': 'alphabet_imgs_mondain/i.png', 'j': 'alphabet_imgs_mondain/j.png',
+                'k': 'alphabet_imgs_mondain/k.png', 'l': 'alphabet_imgs_mondain/l.png', 'm': 'alphabet_imgs_mondain/m.png', 'n': 'alphabet_imgs_mondain/n.png', 'o': 'alphabet_imgs_mondain/o.png',
+                'p': 'alphabet_imgs_mondain/p.png', 'q': 'alphabet_imgs_mondain/q.png', 'r': 'alphabet_imgs_mondain/r.png', 's': 'alphabet_imgs_mondain/s.png', 't': 'alphabet_imgs_mondain/t.png',
+                'u': 'alphabet_imgs_mondain/u.png', 'v': 'alphabet_imgs_mondain/v.png', 'w': 'alphabet_imgs_mondain/w.png', 'x': 'alphabet_imgs_mondain/x.png', 'y': 'alphabet_imgs_mondain/y.png',
+                'z': 'alphabet_imgs_mondain/z.png', ' ': 'alphabet_imgs_mondain/,.png' // Map space to ',.png'
+        }; // Define the mapping of image filenames to characters
+
+        const outputImage = document.getElementById("output-image");
+        const caret = document.getElementById("caret");
+        const inputText = document.getElementById("input-text");
+        let currentText = '';
+        let caretPosition = 0;
+
+        function translateTextToImages() {
+            const text = currentText;
+            outputImage.innerHTML = '';
+            const letterHeight = 100;
+            const lines = text.split('\n');
+
+            for (const line of lines) {
+                for (let i = 0; i < line.length; i++) {
+                    const letterKey = line[i].toLowerCase();
+                    if (imageFilenames.hasOwnProperty(letterKey)) {
+                        const image = document.createElement('img');
+                        image.src = imageFilenames[letterKey];
+                        outputImage.appendChild(image);
+                    }
+                }
+                if (line !== lines[lines.length - 1]) {
+                    outputImage.appendChild(document.createElement('br'));
+                }
+            }
+        }
+
+        function updateCaretPosition() {
+            const text = currentText;
+            if (caretPosition >= 0 && caretPosition <= text.length) {
+                translateTextToImages();
+                const prefix = text.slice(0, caretPosition);
+                const lines = prefix.split('\n');
+                const lineCount = lines.length;
+                const lastLineLength = lines[lineCount - 1].length;
+                const prefixWidth = (lineCount - 1) * 64 + lastLineLength * 64;
+                const lineSpacing = 100;
+                const topOffset = (lineCount - 1) * lineSpacing;
+                caret.style.left = `${prefixWidth}px`;
+                caret.style.top = `${topOffset}px`;
+                outputImage.scrollTop = outputImage.scrollHeight; // Automatically scroll to the bottom
+            }
+        }
+
+        inputText.addEventListener("input", (event) => {
+            currentText = event.target.value;
+            caretPosition = currentText.length;
+            updateCaretPosition();
+        });
+
+        document.body.addEventListener("keydown", (event) => {
+            if (event.key === 'Backspace') {
+                if (caretPosition > 0) {
+                    currentText = currentText.slice(0, caretPosition - 1) + currentText.slice(caretPosition);
+                    caretPosition--;
+                    updateCaretPosition();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
