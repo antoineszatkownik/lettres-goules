@@ -2,7 +2,7 @@
 
 User-prompted text translated on the fly into images taken from an alphabet.
 
-![alt text](https://github.com/antoineszatkownik/lettres-goules/blob/main/example.png)
+![alt text](https://github.com/antoineszatkownik/lettres-goules/blob/main/example.gif)
 
 ## TO DO
 
