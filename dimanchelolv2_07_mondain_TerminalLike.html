@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>lettres-geules</title>
+    <style>
+        #output-image {
+            max-width: 100%;
+            display: inline-block; /* Ensure inline positioning */
+        }
+        img {
+            height: 64px;
+            margin: 0px;
+            display: inline; /* Display images inline */
+        }
+        #caret {
+            display: inline-block;
+            background-color: black;
+            width: 12px;
+            height: 1.2em; /* Adjust the height to match the image height */
+            animation: caret-blink 0.7s steps(1) infinite;
+        }
+        @keyframes caret-blink {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: black; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Text to Image Translator: Des phrases de visages</h1>
+    <div id="output-image"></div>
+    <span id="caret"></span>
+
+    <script>
+        const imageFilenames = {
+            'a': 'alphabet_imgs_mondain/a.png', 'b': 'alphabet_imgs_mondain/b.png', 'c': 'alphabet_imgs_mondain/c.png', 'd': 'alphabet_imgs_mondain/d.png', 'e': 'alphabet_imgs_mondain/e.png',
+                'f': 'alphabet_imgs_mondain/f.png', 'g': 'alphabet_imgs_mondain/g.png', 'h': 'alphabet_imgs_mondain/h.png', 'i': 'alphabet_imgs_mondain/i.png', 'j': 'alphabet_imgs_mondain/j.png',
+                'k': 'alphabet_imgs_mondain/k.png', 'l': 'alphabet_imgs_mondain/l.png', 'm': 'alphabet_imgs_mondain/m.png', 'n': 'alphabet_imgs_mondain/n.png', 'o': 'alphabet_imgs_mondain/o.png',
+                'p': 'alphabet_imgs_mondain/p.png', 'q': 'alphabet_imgs_mondain/q.png', 'r': 'alphabet_imgs_mondain/r.png', 's': 'alphabet_imgs_mondain/s.png', 't': 'alphabet_imgs_mondain/t.png',
+                'u': 'alphabet_imgs_mondain/u.png', 'v': 'alphabet_imgs_mondain/v.png', 'w': 'alphabet_imgs_mondain/w.png', 'x': 'alphabet_imgs_mondain/x.png', 'y': 'alphabet_imgs_mondain/y.png',
+                'z': 'alphabet_imgs_mondain/z.png', ' ': 'alphabet_imgs_mondain/,.png' // Map space to ',.png'
+        }; // Define the mapping of image filenames to characters
+
+        const outputImage = document.getElementById("output-image");
+        const caret = document.getElementById("caret");
+        let currentText = '';
+        let caretPosition = 0;
+
+        function translateTextToImages() {
+            const text = currentText;
+            outputImage.innerHTML = ''; // Clear the previous content
+
+            const letterHeight = 100;
+            const lines = text.split('\n');
+
+            for (const line of lines) {
+                for (let i = 0; i < line.length; i++) {
+                    const letterKey = line[i].toLowerCase();
+                    if (imageFilenames.hasOwnProperty(letterKey)) {
+                        const image = document.createElement('img');
+                        image.src = imageFilenames[letterKey];
+                        outputImage.appendChild(image);
+                    }
+                }
+                // Add a line break after each line
+                outputImage.appendChild(document.createElement('br'));
+            }
+        }
+
+        // Update caret position and re-translate text
+        function updateCaretPosition() {
+            const text = currentText;
+            if (caretPosition >= 0 && caretPosition <= text.length) {
+                translateTextToImages();
+                caret.style.left = `${caretPosition * 64}px`; // Adjust the width based on image width
+            }
+        }
+
+        // Capture keypress events to build the text
+        document.body.addEventListener("keydown", (event) => {
+            if (event.key === 'Enter') { // Use 'Enter' for the Enter key
+                currentText = currentText.slice(0, caretPosition) + '\n' + currentText.slice(caretPosition);
+                caretPosition++;
+            } else if (event.key.length === 1) { // Only add a character if it's a single character
+                currentText = currentText.slice(0, caretPosition) + event.key + currentText.slice(caretPosition);
+                caretPosition++;
+            }
+            updateCaretPosition();
+        });
+
+
+        // Optionally, you can listen for the "Backspace" key to remove characters.
+        document.body.addEventListener("keydown", (event) => {
+            if (event.key === 'Backspace') {
+                if (caretPosition > 0) {
+                    currentText = currentText.slice(0, caretPosition - 1) + currentText.slice(caretPosition);
+                    caretPosition--;
+                }
+            }
+            updateCaretPosition();
+        });
+    </script>
+</body>
+</html>
