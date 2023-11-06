@@ -7,7 +7,7 @@ User-prompted text translated on the fly into images taken from an alphabet.
 ## TO DO
 
 * empêcher les mots de se couper
-* que le fenêtre de gauche se règle en hauteur automatiquement
+* que la fenêtre de gauche se règle en hauteur automatiquement
 * que le caret soit symétrique à droite pour voir où on est
-* si on remonte la fenêtre de droite remonte aussi
+* si on remonte la fenêtre de droite ça remonte aussi
 * web2print
